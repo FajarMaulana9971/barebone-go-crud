@@ -10,8 +10,8 @@ import (
 type UserRepository interface {
 	// GetAllUser(ctx context.Context) (*entity.User, error)
 	GetUserById(ctx context.Context, id int64) (*entity.User, error)
-	CreateUser(ctx context.Context, user *entity.User) (int64, error)
-	UpdateUser(ctx context.Context, id int64, user *entity.User) (int64, error)
+	CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+	UpdateUser(ctx context.Context, id int64, user *entity.User) (*entity.User, error)
 	DeleteUser(ctx context.Context, id int64) error
 }
 
@@ -38,48 +38,58 @@ func (userRepo *userRepository) GetUserById(ctx context.Context, id int64) (*ent
 	return &user, nil
 }
 
-func (userRepo *userRepository) CreateUser(ctx context.Context, user *entity.User) (int64, error) {
+func (userRepo *userRepository) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
 	stmt, err := userRepo.db.PrepareContext(ctx, "INSERT INTO users (name, email) VALUES (?, ?)")
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.ExecContext(ctx, user.Name, user.Email)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return id, nil
+	createUser, err := userRepo.GetUserById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return createUser, nil
 }
 
-func (userRepo *userRepository) UpdateUser(ctx context.Context, id int64, user *entity.User) (int64, error) {
+func (userRepo *userRepository) UpdateUser(ctx context.Context, id int64, user *entity.User) (*entity.User, error) {
 	stmt, err := userRepo.db.PrepareContext(ctx, "UPDATE users SET name = ?, email = ?, WHERE id = ?")
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.ExecContext(ctx, user.Name, user.Email, id)
 	if err != nil {
-		return 0, nil
+		return nil, nil
 	}
 
 	affected, err := result.RowsAffected()
 	if err != nil {
-		return 0, nil
+		return nil, nil
 	}
 	if affected == 0 {
-		return 0, sql.ErrNoRows
+		return nil, sql.ErrNoRows
 	}
 
-	return id, nil
+	UpdateUser, err := userRepo.GetUserById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return UpdateUser, nil
 }
 
 func (userRepo *userRepository) DeleteUser(ctx context.Context, id int64) error {

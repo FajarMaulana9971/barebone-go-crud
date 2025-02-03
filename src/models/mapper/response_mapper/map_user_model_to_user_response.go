@@ -1,4 +1,4 @@
-package response
+package responsemapper
 
 import (
 	"barebone-go-crud/src/models/dto/response"

@@ -1,4 +1,4 @@
-package request
+package requestmapper
 
 import (
 	"barebone-go-crud/src/models/dto/request"

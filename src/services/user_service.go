@@ -9,8 +9,8 @@ import (
 
 type UserService interface {
 	GetUserById(ctx context.Context, id int64) (*entity.User, error)
-	CreateUser(ctx context.Context, user *entity.User) (int64, error)
-	UpdateUser(ctx context.Context, id int64, user *entity.User) (int64, error)
+	CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+	UpdateUser(ctx context.Context, id int64, user *entity.User) (*entity.User, error)
 	DeleteUser(ctx context.Context, id int64) error
 }
 
@@ -26,16 +26,16 @@ func (s *userService) GetUserById(ctx context.Context, id int64) (*entity.User, 
 	return s.repository.GetUserById(ctx, id)
 }
 
-func (s *userService) CreateUser(ctx context.Context, user *entity.User) (int64, error) {
+func (s *userService) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
 	if user.Name == "" || user.Email == "" {
-		return 0, errors.New("field name and email is mandatory")
+		return nil, errors.New("field name and email is mandatory")
 	}
 	return s.repository.CreateUser(ctx, user)
 }
 
-func (s *userService) UpdateUser(ctx context.Context, id int64, user *entity.User) (int64, error) {
+func (s *userService) UpdateUser(ctx context.Context, id int64, user *entity.User) (*entity.User, error) {
 	if id == 0 {
-		return 0, errors.New("id is not valid")
+		return nil, errors.New("id is not valid")
 	}
 
 	return s.repository.UpdateUser(ctx, id, user)
