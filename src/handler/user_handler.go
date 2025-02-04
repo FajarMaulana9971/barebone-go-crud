@@ -20,11 +20,11 @@ type UserHandler struct {
 	service services.UserService
 }
 
-func newHandleUser(s services.UserService) *UserHandler {
+func NewHandleUser(s services.UserService) *UserHandler {
 	return &UserHandler{service: s}
 }
 
-func (h *UserHandler) GetUserById(w http.ResponseWriter, r http.Request) {
+func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	segments := strings.Split(r.URL.Path, "/")
 	if len(segments) < 3 {
 		http.Error(w, "Url is not valid", http.StatusBadRequest)
@@ -57,7 +57,7 @@ func (h *UserHandler) GetUserById(w http.ResponseWriter, r http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-func (h *UserHandler) CreateUser(w http.ResponseWriter, r http.Request) {
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req request.UserRequest
 
 	body, err := io.ReadAll(r.Body)
@@ -89,7 +89,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-func (h *UserHandler) UpdateUser(w http.ResponseWriter, r http.Request) {
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	segments := strings.Split(r.URL.Path, "/")
 	if len(segments) < 3 {
 		http.Error(w, "Url is not valid", http.StatusBadRequest)
@@ -135,7 +135,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-func (h *UserHandler) DeleteUser(w http.ResponseWriter, r http.Request) {
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	segments := strings.Split(r.URL.Path, "/")
 	if len(segments) < 3 {
 		http.Error(w, "Url is not valid", http.StatusBadRequest)
