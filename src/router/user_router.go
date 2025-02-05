@@ -16,28 +16,42 @@ func NewRouter(userHandler *handler.UserHandler) *http.ServeMux {
 		http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
 	})
 
+	// mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
+	// 	if r.Method == http.MethodGet {
+	// 		userHandler.GetUserById(w, r)
+	// 		return
+	// 	}
+	// 	http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
+	// })
+
+	// mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
+	// 	if r.Method == http.MethodPut {
+	// 		userHandler.UpdateUser(w, r)
+	// 		return
+	// 	}
+	// 	http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
+	// })
+
+	// mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
+	// 	if r.Method == http.MethodDelete {
+	// 		userHandler.DeleteUser(w, r)
+	// 		return
+	// 	}
+	// 	http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
+	// })
+
 	mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
+
+		switch r.Method {
+		case http.MethodGet:
 			userHandler.GetUserById(w, r)
-			return
-		}
-		http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
-	})
-
-	mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPut {
+		case http.MethodPut:
 			userHandler.UpdateUser(w, r)
-			return
-		}
-		http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
-	})
-
-	mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodDelete {
+		case http.MethodDelete:
 			userHandler.DeleteUser(w, r)
-			return
+		default:
+			http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
 		}
-		http.Error(w, "Method is not supported", http.StatusMethodNotAllowed)
 	})
 
 	return mux
